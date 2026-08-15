@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # ===========================================================================
 # Copyright (c) 2019, The Linux Foundation. All rights reserved.
 
@@ -1004,9 +1003,7 @@ def CreateGPTPartitionTable(PhysicalPartitionNumber, UserProvided=False):
             % (FirstLBA, LastLBA, LastLBA - FirstLBA + 1)
         )
 
-        # Attributes
         Attributes = 0x0
-        # import pdb; pdb.set_trace()
 
         if PhyPartition[k][j]["readonly"] == "true":
             Attributes |= 1 << 60  ## Bit 60 is read only
@@ -1017,9 +1014,17 @@ def CreateGPTPartitionTable(PhysicalPartitionNumber, UserProvided=False):
         if PhyPartition[k][j]["system"] == "true":
             Attributes |= 1 << 0
         if PhyPartition[k][j]["tries_remaining"] > 0:
-            Attributes |= PhyPartition[k][j]["tries_remaining"] << 52
+            # max_retry counter is bits 51-53 (gpt-utils.h PART_ATT_MAX_RETRY_CNT_BIT)
+            Attributes |= PhyPartition[k][j]["tries_remaining"] << 51
         if PhyPartition[k][j]["priority"] > 0:
             Attributes |= PhyPartition[k][j]["priority"] << 48
+        # qbootctl A/B slot flags (qbootctl gpt-utils.h)
+        if PhyPartition[k][j]["active"] == "true":
+            Attributes |= 1 << 50
+        if PhyPartition[k][j]["successful"] == "true":
+            Attributes |= 1 << 54
+        if PhyPartition[k][j]["unbootable"] == "true":
+            Attributes |= 1 << 55
 
         print("Attributes\t\t0x%X" % Attributes)
 
@@ -2002,6 +2007,9 @@ def ParseXML(XMLFile):
                 Partition["readbackverify"] = "false"
                 Partition["tries_remaining"] = 0
                 Partition["priority"] = 0
+                Partition["active"] = "false"
+                Partition["successful"] = "false"
+                Partition["unbootable"] = "false"
 
                 ##import pdb; pdb.set_trace()
 
