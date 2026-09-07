@@ -219,9 +219,18 @@ def read_conf(path: str) -> tuple[str, list[str]]:
     partition_lines: list[str] = []
     with open(path) as f:
         for raw in f:
-            if re.search(r"^\s*#", raw) or re.search(r"^\s*$", raw):
+            # Strip inline comments before tokenising. Everything from the
+            # first '#' to end of line is a comment (this also drops
+            # whole-line comments). --disk/--partition option values never
+            # contain '#', so this is safe. Without it, a trailing comment
+            # such as "--partition ...  # note --filename=foo" would leak the
+            # commented "--filename=foo" token into parse_partition_lines'
+            # naive split(" "), re-adding a filename that was deliberately
+            # dropped and producing a rawprogram entry for a non-existent
+            # binary (flash-time "Failed to Open File").
+            line = raw.split("#", 1)[0].strip()
+            if not line:
                 continue
-            line = raw.strip()
             if line.startswith("--disk"):
                 if disk_line is not None:
                     raise ConfParseError(
