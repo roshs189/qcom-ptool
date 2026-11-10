@@ -1,4 +1,4 @@
-# qcom-tool
+# qcom-ptool
 
 qcom-ptool contains various device partitioning utilities like ptool.py, gen_partitions.py and various sample partition configuration files needed for Qualcomm SoCs. Qualcomm Linux currently supports two reference Linux based OSes (Yocto with [meta-qcom](https://github.com/qualcomm-linux/meta-qcom) and Debian with [qcom-deb-images](https://github.com/qualcomm-linux/qcom-deb-images)) which uses this tool to generate partition table layouts. The partition GUIDs, names and size budgets are picked to support boot flows as follows:
 
@@ -19,9 +19,18 @@ Once installed, the tool is invoked as:
 ```sh
 qcom-ptool gen_partition -i platforms/<soc>/<variant>/partitions.conf -o partitions.xml
 qcom-ptool gen_contents  -p partitions.xml -t contents.xml.in -o contents.xml
+qcom-ptool gen_udev_rules -o 55-qcom-raw-partitions-noblkid.rules
 qcom-ptool ptool         -x partitions.xml
 qcom-ptool msp           -r rawprogram0.xml -d /dev/sdX -p patch0.xml
 ```
+
+By default, the generator scans all `platforms/*/*/partitions.conf` files.
+Repeatable `-i` options can select specific layouts. It skips known filesystem
+partition names and emits exact `PARTNAME` rules for the others. Unknown names
+retain normal blkid probing. Matched partitions are marked with
+`QCOM_RAW_PARTITION=1` so later udev rules can reuse the generated
+classification. The rules use
+`UDEV_DISABLE_PERSISTENT_STORAGE_BLKID_FLAG` on systemd v252 and newer.
 
 Run `qcom-ptool <subcommand> -h` to see the options accepted by each
 subcommand.
@@ -30,8 +39,10 @@ subcommand.
 
 ## Dependencies
 
-At runtime, the scripts use only the Python standard library (Python 3.8+),
-so no runtime dependencies need to be installed beyond the package itself.
+At runtime the tool targets Python 3.8+ and depends on two third-party
+libraries, `PyYAML` and `jsonschema`, used to load and validate the YAML
+partition source. Both are declared in `pyproject.toml` and pulled in
+automatically by `pip install .`.
 
 For development, `make lint` invokes `ruff` and `mypy` and `make unit-test`
 runs the `pytest` suite under `tests/unit/`. On Debian/Ubuntu, install
