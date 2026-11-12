@@ -110,29 +110,41 @@
         <file_name>{partition_patch_file_name}</file_name>
         <file_path flavor="default">.</file_path>
       </partition_patch_file>
-      <download_file storage_type="spinor" fastboot_complete="SAIL_HYP">
-        <file_name>sailhyp.elf</file_name>
-        <file_path flavor="sail_nor">./sail_nor</file_path>
+      <download_file storage_type="spinor" fastboot_complete="RTSS_HYP">
+        <file_name>rtsshyp.elf</file_name>
+        <file_path flavor="sail_nor">./spinor</file_path>
       </download_file>
-      <download_file storage_type="spinor" fastboot_complete="SAIL_SW1">
-        <file_name>sailsw1.elf</file_name>
-        <file_path flavor="sail_nor">./sail_nor</file_path>
+      <download_file storage_type="spinor" fastboot_complete="RTSS_DLP">
+        <file_name>sail_nor_dlp.bin</file_name>
+        <file_path flavor="sail_nor">./spinor</file_path>
+      </download_file>
+      <download_file storage_type="spinor" fastboot_complete="RTSS_SW1">
+        <file_name>rtsssw1.elf</file_name>
+        <file_path flavor="sail_nor">./spinor</file_path>
+      </download_file>
+      <download_file storage_type="spinor" fastboot_complete="RTSS_SW2">
+        <file_name>rtsssw2.elf</file_name>
+        <file_path flavor="sail_nor">./spinor</file_path>
+      </download_file>
+      <download_file storage_type="spinor" fastboot_complete="RTSS_SW3">
+        <file_name>rtsssw3.elf</file_name>
+        <file_path flavor="sail_nor">./spinor</file_path>
       </download_file>
       <download_file storage_type="spinor" flavor="sail_nor">
         <file_name>gpt_main0.bin</file_name>
-        <file_path flavor="sail_nor">./sail_nor</file_path>
+        <file_path flavor="sail_nor">./spinor</file_path>
       </download_file>
       <download_file storage_type="spinor" flavor="sail_nor">
         <file_name>gpt_backup0.bin</file_name>
-        <file_path flavor="sail_nor">./sail_nor</file_path>
+        <file_path flavor="sail_nor">./spinor</file_path>
       </download_file>
       <partition_file storage_type="spinor" flavor="sail_nor">
         <file_name>rawprogram0.xml</file_name>
-        <file_path flavor="sail_nor">./sail_nor</file_path>
+        <file_path flavor="sail_nor">./spinor</file_path>
       </partition_file>
       <partition_patch_file storage_type="spinor" flavor="sail_nor">
         <file_name>patch0.xml</file_name>
-        <file_path flavor="sail_nor">./sail_nor</file_path>
+        <file_path flavor="sail_nor">./spinor</file_path>
       </partition_patch_file>
    </build>
   </builds_flat>
